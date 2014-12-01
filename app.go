@@ -8,46 +8,52 @@ import "github.com/go-martini/martini"
 import "github.com/martini-contrib/binding"
 
 type CIData struct {
-  Payload struct {
-    BuildUrl string `json:"build_url"`
-    BuildNum int `json:"build_num"`
-    Branch string `json:"branch"`
-    CommiterName string `json:"committer_name"`
-    Outcome string `json:"outcome"`
-  } `json:"payload"`
+	Payload struct {
+		BuildUrl       string `json:"build_url"`
+		BuildNum       int    `json:"build_num"`
+		Branch         string `json:"branch"`
+		RepositoryName string `json:"reponame"`
+		CommiterName   string `json:"committer_name"`
+		Outcome        string `json:"outcome"`
+	} `json:"payload"`
 }
 
-var template = `Build number *%d* based on a commit by *%s* to a *%s* branch completed on CircleCI with a status of *%s*.
+var template = `Build number *%d* based on a commit by *%s* to a *%s* repository branch *%s* completed on CircleCI with a status of *%s*.
 More information is available on %s<<CircleCI>>.`
 
 func main() {
-    m := martini.Classic()
+	m := martini.Classic()
 
-    m.Post("/", func() (int, string) {
-      return 200, "I'm alive."
-    })
+	m.Post("/", func() (int, string) {
+		return 200, "I'm alive."
+	})
 
-    m.Post("/webhook/:auth/:hash", binding.Bind(CIData{}), func(params martini.Params, ci CIData) (int, string) {
-      if os.Getenv("WEBHOOK_SECRET") == params["auth"] {
-        fleep_url := "https://fleep.io/hook/" + params["hash"]
+	m.Post("/webhook/:auth/:hash", binding.Bind(CIData{}), func(params martini.Params, ci CIData) (int, string) {
+		if os.Getenv("WEBHOOK_SECRET") == params["auth"] {
+			fleep_url := "https://fleep.io/hook/" + params["hash"]
 
-        message := fmt.Sprintf(template, ci.Payload.BuildNum, ci.Payload.CommiterName,  ci.Payload.Branch,
-          ci.Payload.Outcome, ci.Payload.BuildUrl)
+			message := fmt.Sprintf(template,
+				ci.Payload.BuildNum,
+				ci.Payload.CommiterName,
+				ci.Payload.RepositoryName,
+				ci.Payload.Branch,
+				ci.Payload.Outcome,
+				ci.Payload.BuildUrl)
 
-        resp, err := http.PostForm(fleep_url, url.Values{"message": {string(message)}})
-        if err != nil {
-         fmt.Println("Error during POST request to Fleep", err)
-         return 500, "Error calling Fleep Hook"
-        }
+			resp, err := http.PostForm(fleep_url, url.Values{"message": {string(message)}})
+			if err != nil {
+				fmt.Println("Error during POST request to Fleep", err)
+				return 500, "Error calling Fleep Hook"
+			}
 
-        defer resp.Body.Close()
-        fmt.Println("Fleep hook response status:", resp.Status)
+			defer resp.Body.Close()
+			fmt.Println("Fleep hook response status:", resp.Status)
 
-        return 200, "Successfully proxied hook " + params["hash"]
-      } else {
-        return 401, "Unauthorized."
-      }
-    })
+			return 200, "Successfully proxied hook " + params["hash"]
+		} else {
+			return 401, "Unauthorized."
+		}
+	})
 
-    m.Run()
+	m.Run()
 }
