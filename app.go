@@ -17,7 +17,7 @@ type CIData struct {
   } `json:"payload"`
 }
 
-var template = `Build number *%d* based on a commit by *%s* completed on CircleCI with a status of *%s*.
+var template = `Build number *%d* based on a commit by *%s* to a *%s* branch completed on CircleCI with a status of *%s*.
 More information is available on %s<<CircleCI>>.`
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
       if os.Getenv("WEBHOOK_SECRET") == params["auth"] {
         fleep_url := "https://fleep.io/hook/" + params["hash"]
 
-        message := fmt.Sprintf(template, ci.Payload.BuildNum, ci.Payload.CommiterName, 
+        message := fmt.Sprintf(template, ci.Payload.BuildNum, ci.Payload.CommiterName,  ci.Payload.Branch,
           ci.Payload.Outcome, ci.Payload.BuildUrl)
 
         resp, err := http.PostForm(fleep_url, url.Values{"message": {string(message)}})
