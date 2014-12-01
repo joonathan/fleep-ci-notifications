@@ -27,7 +27,6 @@ func main() {
       if os.Getenv("WEBHOOK_SECRET") == params["auth"] {
         fleep_url := "https://fleep.io/hook/" + params["hash"]
 
-        fmt.Println(ci.Payload)
         message := fmt.Sprintf(template, ci.Payload.BuildNum, ci.Payload.CommiterName, 
           ci.Payload.Outcome, ci.Payload.BuildUrl)
 
