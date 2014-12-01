@@ -23,6 +23,10 @@ More information is available on %s<<CircleCI>>.`
 func main() {
     m := martini.Classic()
 
+    m.Post("/", func() (int, string) {
+      return 200, "I'm alive."
+    })
+
     m.Post("/webhook/:auth/:hash", binding.Bind(CIData{}), func(params martini.Params, ci CIData) (int, string) {
       if os.Getenv("WEBHOOK_SECRET") == params["auth"] {
         fleep_url := "https://fleep.io/hook/" + params["hash"]
