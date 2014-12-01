@@ -1,5 +1,5 @@
 {
-	"ImportPath": "teleport-ci-notifications",
+	"ImportPath": "fleep-ci-notifications",
 	"GoVersion": "go1.3.3",
 	"Deps": [
 		{
