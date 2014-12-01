@@ -1,0 +1,1 @@
+web: teleport-ci-notifications

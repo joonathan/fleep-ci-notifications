@@ -1,0 +1,20 @@
+{
+	"ImportPath": "teleport-ci-notifications",
+	"GoVersion": "go1.3.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-4-g4b81725",
+			"Rev": "4b8172520a03fa190f427bbd284db01b459bfce7"
+		},
+		{
+			"ImportPath": "github.com/go-martini/martini",
+			"Comment": "v1.0-71-g397193c",
+			"Rev": "397193c10a3e135a9f0c8eee272ca2ad4a34fc97"
+		},
+		{
+			"ImportPath": "github.com/martini-contrib/binding",
+			"Rev": "1928ed2850e7d65507ea4198d935597e43612c7d"
+		}
+	]
+}
