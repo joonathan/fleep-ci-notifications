@@ -1,1 +1,1 @@
-web: teleport-ci-notifications
+web: fleep-ci-notifications
