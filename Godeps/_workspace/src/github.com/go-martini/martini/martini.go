@@ -23,7 +23,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/codegangsta/inject"
+	"fleep-ci-notifications/Godeps/_workspace/src/github.com/codegangsta/inject"
 )
 
 // Martini represents the top level web application. inject.Injector methods can be invoked to map services on a global level.
@@ -55,6 +55,12 @@ func (m *Martini) Handlers(handlers ...Handler) {
 func (m *Martini) Action(handler Handler) {
 	validateHandler(handler)
 	m.action = handler
+}
+
+// Logger sets the logger
+func (m *Martini) Logger(logger *log.Logger) {
+	m.logger = logger
+	m.Map(m.logger)
 }
 
 // Use adds a middleware Handler to the stack. Will panic if the handler is not a callable func. Middleware Handlers are invoked in the order that they are added.

@@ -2,14 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/url"
 	"os"
 	"regexp"
-)
-import "fmt"
-import "net/http"
-import "net/url"
 
-import "github.com/go-martini/martini"
+	"fleep-ci-notifications/Godeps/_workspace/src/github.com/go-martini/martini"
+)
 
 type circleCIData struct {
 	Payload struct {

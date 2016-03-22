@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/codegangsta/inject"
+	"fleep-ci-notifications/Godeps/_workspace/src/github.com/codegangsta/inject"
 )
 
 const (
