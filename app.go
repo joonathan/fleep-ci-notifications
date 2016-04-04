@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"strings"
 
 	"fleep-ci-notifications/Godeps/_workspace/src/github.com/go-martini/martini"
 )
@@ -103,7 +104,7 @@ var circleCITemplate = `Build number *%d* based on a commit by *%s* to a *%s* re
 More information is available on %s<<CircleCI>>.`
 
 var buildKiteTemplate = `Build number *%d* based on a commit by *%s* to a *%s* repository branch *%s* completed on BuildKite with a status of *%s*.
-More information is available on %s<<BuildKite>>.`
+Additional build information is available on %s<<BuildKite>>. Details on the commit are available on %s<<%s>>.`
 
 func main() {
 	m := martini.Classic()
@@ -129,6 +130,13 @@ func main() {
 				return 500, "Bad request."
 			}
 
+			var providerURL string
+			if buildkite.Pipeline.Provider.ID == "bitbucket" {
+				providerURL = "https://bitbucket.org/" + buildkite.Pipeline.Provider.Settings.Repository + "/commits/" + buildkite.Build.Commit
+			} else if buildkite.Pipeline.Provider.ID == "github" {
+				providerURL = "https://github.com/" + buildkite.Pipeline.Provider.Settings.Repository + "/commits/" + buildkite.Build.Commit
+			}
+
 			r := regexp.MustCompile("Author:.{1,5}(?P<author>.+ <.+>)\\nA")
 			message = fmt.Sprintf(buildKiteTemplate,
 				buildkite.Build.Number,
@@ -136,7 +144,9 @@ func main() {
 				buildkite.Pipeline.Repository,
 				buildkite.Build.Branch,
 				buildkite.Build.State,
-				buildkite.Build.WebURL)
+				buildkite.Build.WebURL,
+				providerURL,
+				strings.Title(buildkite.Pipeline.Provider.ID))
 		} else {
 			var circle circleCIData
 			err := j.Decode(&circle)
